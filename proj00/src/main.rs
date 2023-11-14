@@ -1,17 +1,24 @@
 use std::vec::Vec;
-use std::io::{self, BufReader, BufRead};
+use std::io;
 
+// Just a macro
 macro_rules! parse_line {
     ($separator: literal, $($t: ty),+) => ({
         let mut a_str = String::new();
-        io::stdin().read_line(&mut a_str).expect("read error");
-        a_str.pop();
-        let mut a_iter = a_str.split($separator);
-        (
-            $(
-                a_iter.next().unwrap().parse::<$t>().expect("parse error"),
-            )+
-        )
+        
+        match (io::stdin().read_line(&mut a_str)) {
+            Ok(_) => {
+                a_str.pop();
+                let mut a_iter = a_str.split($separator);
+                let result = (
+                    $(
+                        a_iter.next().unwrap().parse::<$t>(),
+                    )+
+                );
+                Ok(result)
+            },
+            Err(err) => Err(err),
+        }
     })
 }
 
@@ -31,21 +38,19 @@ impl Person {
 }
 
 fn main() {
-    let (num_people, _num_relations) = parse_line!(",", usize, usize);
+    let (num_people, _num_relations) = parse_line!(",", usize, usize).unwrap();
+    let (num_people, _num_relations) = (num_people.unwrap(), _num_relations.unwrap());
 
     let mut people: Vec<Person> = vec!(Person::new(); num_people);
-    
-    for line in BufReader::new(io::stdin()).lines().map(|l| l.unwrap()) {
-        let mut data = line.split(" ");
-        let person1 = data.next().unwrap().parse::<usize>().unwrap();
-        let person2 = data.next().unwrap().parse::<usize>().unwrap();
+
+    while let Ok((Ok(person1), Ok(person2))) = parse_line!(" ", usize, usize) {
         people.get_mut(person1-1).unwrap().my_friends.push(person2-1);
         people[person2-1].friend_of += 1;
     }
 
-    // Num Pessoas com i amigas
+    // Num of People with i friends
     let mut histograma1: Vec<usize> = vec!(0; num_people);
-    // Num Pessoas que são amigas de i pessoas
+    // Num of People who are friends of i people
     let mut histograma2: Vec<usize> = vec!(0; num_people);
 
     for p in &people {
@@ -57,6 +62,7 @@ fn main() {
     println!("Histograma 2\n{:?}", histograma2);
 
     println!("Output 2\n");
+    // Bad O(n³)
     for p in &people {
         for p2 in &people {
             let mut common = 0;

@@ -1,18 +1,23 @@
 use std::vec::Vec;
 use std::io;
 
-// Just a macro
+// Just a macro to parse lines
 macro_rules! parse_line {
     ($separator: literal, $($t: ty),+) => ({
         let mut a_str = String::new();
-        
         match (io::stdin().read_line(&mut a_str)) {
             Ok(_) => {
                 a_str.pop();
                 let mut a_iter = a_str.split($separator);
                 let result = (
                     $(
-                        a_iter.next().unwrap().parse::<$t>(),
+                        match (a_iter.next()) {
+                            Some(value) => match (value.parse::<$t>()) {
+                                Ok(v) => Some(v),
+                                Err(_) => None,
+                            },
+                            None => None,
+                        },
                     )+
                 );
                 Ok(result)
@@ -38,12 +43,11 @@ impl Person {
 }
 
 fn main() {
-    let (num_people, _num_relations) = parse_line!(",", usize, usize).unwrap();
-    let (num_people, _num_relations) = (num_people.unwrap(), _num_relations.unwrap());
+    let (Some(num_people), Some(_num_relations)) = parse_line!(",", usize, usize).unwrap() else {panic!()};
 
     let mut people: Vec<Person> = vec!(Person::new(); num_people);
 
-    while let Ok((Ok(person1), Ok(person2))) = parse_line!(" ", usize, usize) {
+    while let Ok((Some(person1), Some(person2))) = parse_line!(" ", usize, usize) {
         people.get_mut(person1-1).unwrap().my_friends.push(person2-1);
         people[person2-1].friend_of += 1;
     }

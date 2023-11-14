@@ -1,10 +1,15 @@
 [package]
-name = "proj00"
+name = "line_parser"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-line_parser = { path = "../line_parser" }
 
+# [workspace]
+# members = ["line_parser"]
+
+[lib]
+name = "line_parser"
+crate-type = ["lib"]

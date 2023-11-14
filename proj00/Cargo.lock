@@ -3,5 +3,12 @@
 version = 3
 
 [[package]]
+name = "line_parser"
+version = "0.1.0"
+
+[[package]]
 name = "proj00"
 version = "0.1.0"
+dependencies = [
+ "line_parser",
+]

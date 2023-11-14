@@ -1,6 +1,19 @@
 use std::vec::Vec;
 use std::io::{self, BufReader, BufRead};
 
+// macro_rules! parse_line {
+//     (&String: separator, $($t: ty),+) => ({
+//         let mut a_str = String::new();
+//         io::stdin().read_line(&mut a_str).expect("read error");
+//         let mut a_iter = a_str.split(separator);
+//         (
+//             $(
+//             a_iter.next().unwrap().parse::<$t>().expect("parse error"),
+//             )+
+//         )
+//     })
+// }
+
 #[derive(Clone, Debug)]
 struct Person {
     my_friends: Vec<usize>,
@@ -40,12 +53,26 @@ fn main() {
     // Pessoas que são amigas de i pessoas
     let mut histograma2: Vec<usize> = vec!(0; num_people);
 
-    for p in people {
+    for p in &people {
         histograma1[p.my_friends.len()] = histograma1[p.my_friends.len()]+1;
         histograma2[p.friend_of.len()] = histograma2[p.friend_of.len()]+1;
     }
 
     println!("Histograma 1\n{:?}", histograma1);
     println!("Histograma 2\n{:?}", histograma2);
+
+    println!("Output 2\n");
+    for p in &people {
+        for p2 in &people {
+            let mut common = 0;
+            for friend in &p.my_friends {
+                if p2.my_friends.contains(&friend) {
+                    common += 1;
+                }
+            }
+            print!("{} ",common);
+        }
+        println!("");
+    }
 
 }

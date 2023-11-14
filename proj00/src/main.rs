@@ -1,26 +1,23 @@
 use std::vec::Vec;
 use std::io;
 
+fn get_value<T: std::str::FromStr>(value: Option<&str>) -> Option<T> {
+    value?.parse::<T>().ok()
+}
+
 // Just a macro to parse lines
 macro_rules! parse_line {
-    ($separator: literal, $($t: ty),+) => ({
+    ($separator: literal, $($t: ty), +) => ({
         let mut a_str = String::new();
         match (io::stdin().read_line(&mut a_str)) {
             Ok(_) => {
-                a_str.pop();
+                a_str.pop(); // Remove new_line
                 let mut a_iter = a_str.split($separator);
-                let result = (
+                Ok((
                     $(
-                        match (a_iter.next()) {
-                            Some(value) => match (value.parse::<$t>()) {
-                                Ok(v) => Some(v),
-                                Err(_) => None,
-                            },
-                            None => None,
-                        },
+                        get_value::<$t>(a_iter.next()),
                     )+
-                );
-                Ok(result)
+                ))
             },
             Err(err) => Err(err),
         }
@@ -34,7 +31,7 @@ struct Person {
 }
 
 impl Person {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self {
             my_friends: Vec::new(),
             friend_of: 0,
@@ -43,7 +40,9 @@ impl Person {
 }
 
 fn main() {
-    let (Some(num_people), Some(_num_relations)) = parse_line!(",", usize, usize).unwrap() else {panic!()};
+    let Ok((Some(num_people), Some(_num_relations))) = parse_line!(",", usize, usize) else {
+        panic!("Could not parse first line");
+    };
 
     let mut people: Vec<Person> = vec!(Person::new(); num_people);
 
@@ -58,6 +57,7 @@ fn main() {
     let mut histograma2: Vec<usize> = vec!(0; num_people);
 
     for p in &people {
+        println!("{:?}", p);
         histograma1[p.my_friends.len()] += 1;
         histograma2[p.friend_of] += 1;
     }

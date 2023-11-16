@@ -1,5 +1,13 @@
 # Lab Projects - ASA
 
+## Source Code
+
+Available code for each project:
+* [Project 0](proj00/src/main.rs)
+
+Macro for parsing input:
+* [line_parser](line_parser/src/lib.rs)
+
 ## Requirements
 
 To run rust crates you should use [rustup](https://www.rust-lang.org/tools/install).

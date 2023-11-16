@@ -1,1 +1,5 @@
+# $CARGO_HOME with shell.nix
 .cargo_home
+
+# Rust binaries
+/target

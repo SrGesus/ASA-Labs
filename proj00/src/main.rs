@@ -29,6 +29,7 @@ fn main() {
     }
 
     // Num of People with i friends
+    // Size assumes you can't be your own friend
     let mut histograma1: Vec<usize> = vec!(0; num_people);
     // Num of People who are friends of i people
     let mut histograma2: Vec<usize> = vec!(0; num_people);
@@ -43,7 +44,7 @@ fn main() {
     println!("Histograma 2\n{:?}", histograma2);
 
     println!("Output 2\n");
-    // Bad O(n³)
+    // Bad O(n⁴)
     for p in &people {
         for p2 in &people {
             let mut common = 0;
